@@ -126,25 +126,24 @@ def get_img_transform(args, is_training):
 
     normalize = get_normalize()
 
-    if not is_training: # No augmentation
-        ret = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Resize(train_crop_size, interpolation=interpolation),
-            ]
-        )
-    else:
-        ret = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Resize(test_crop_size, interpolation=interpolation),
-                transforms.RandomHorizontalFlip(p=0.3),
-                transforms.RandomRotation(degrees=10),
-                transforms.ColorJitter(brightness=0.4, contrast=0.4),
-                transforms.GaussianBlur(3),
-                lambda x: salt_and_pepper_noise(x, salt_vs_pepper=0.45, amount=0.02),
-            ]
-        )
+    if not is_training:  # Testing (NO augmentation)
+        ret = transforms.Compose([
+            transforms.Resize(test_crop_size, interpolation=interpolation),
+            transforms.ToTensor(),
+            normalize,   
+        ])
+    else:  # Training (with augmentation)
+        ret = transforms.Compose([
+            transforms.Resize(train_crop_size, interpolation=interpolation),
+            transforms.ToTensor(),
+            transforms.RandomHorizontalFlip(p=0.3),
+            transforms.RandomRotation(degrees=10),
+            transforms.ColorJitter(brightness=0.4, contrast=0.4),
+            transforms.GaussianBlur(3),
+            lambda x: salt_and_pepper_noise(x, salt_vs_pepper=0.45, amount=0.02),
+            normalize,   
+        ])
+        
     return ret
 
 
@@ -203,7 +202,10 @@ def get_rf_transform(args, is_training, augment=False):
     if getattr(args, 'interpolation', None) and args.interpolation == 'bilinear':
         interpolation = Image.BILINEAR
 
-      # Base transform: resize + to tensor
+    normalize = get_normalize()
+
+    # Base transform: resize + to tensor
+
     if is_training:
         base_transform = transforms.Compose([
             transforms.Resize(train_crop_size, interpolation=interpolation),
@@ -215,23 +217,21 @@ def get_rf_transform(args, is_training, augment=False):
             transforms.ToTensor(),
         ])
 
-      # Wrapper function
     def transform_fn(img):
-        # Convert PIL image to tensor
         base_tensor = base_transform(img)
 
         if is_training and augment:
-            # Apply all RF augmentations
             aug_list = [
-                ("Time Shift",       rf_time_shift(base_tensor)),
-                ("Time Mask",        rf_time_mask(base_tensor)),
-                ("Freq Mask",        rf_freq_mask(base_tensor)),
-                ("Gaussian Noise",   rf_add_gaussian_noise(base_tensor)),
-                ("Gaussian Blur",    rf_gaussian_blur(base_tensor)),
+                ("Time Shift",       normalize(rf_time_shift(base_tensor))),
+                ("Time Mask",        normalize(rf_time_mask(base_tensor))),
+                ("Freq Mask",        normalize(rf_freq_mask(base_tensor))),
+                ("Gaussian Noise",   normalize(rf_add_gaussian_noise(base_tensor))),
+                ("Gaussian Blur",    normalize(rf_gaussian_blur(base_tensor))),
             ]
-            return base_tensor, aug_list
+            return normalize(base_tensor), aug_list
         else:
-            return base_tensor
+            return normalize(base_tensor)
+
     return transform_fn
 
 
