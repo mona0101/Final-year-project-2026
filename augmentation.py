@@ -8,6 +8,8 @@ from PIL import Image, ImageFilter
 import torchvision.transforms as T
 import librosa
 
+
+
 # standard normalization values used when training models (most common for PyTorch models like ResNet, VGG, EfficientNet)
 IMAGENET_PIXEL_MEAN = [123.675, 116.280, 103.530]
 IMAGENET_PIXEL_STD = [58.395, 57.12, 57.375]
@@ -71,7 +73,6 @@ def time_stretch_fixlen(y, rate_min=0.9, rate_max=1.1,
 
 
 # audio augmentation function
-
 def get_audio_transform(args, is_training, feature_type):
 
     if not is_training:
@@ -113,37 +114,37 @@ def get_audio_transform(args, is_training, feature_type):
     return logmel_augment
 
 
-# image augmentation function
-def get_img_transform(args, is_training):
 
+# image augmentation function
+def get_img_transform(args, is_training, augment=True):
     train_crop_size = getattr(args, 'train_crop_size', args.crop_size)
-    test_scale = getattr(args, 'test_scale', args.scale_size)
     test_crop_size = getattr(args, 'test_crop_size', args.crop_size)
 
     interpolation = Image.BICUBIC
-    if getattr(args, 'interpolation', None) and  args.interpolation == 'bilinear':
+    if getattr(args, 'interpolation', None) == 'bilinear':
         interpolation = Image.BILINEAR
 
     normalize = get_normalize()
 
-    if not is_training:  # Testing (NO augmentation)
+    if is_training and augment:
         ret = transforms.Compose([
-            transforms.Resize(test_crop_size, interpolation=interpolation),
             transforms.ToTensor(),
-            normalize,   
-        ])
-    else:  # Training (with augmentation)
-        ret = transforms.Compose([
             transforms.Resize(train_crop_size, interpolation=interpolation),
-            transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.3),
             transforms.RandomRotation(degrees=10),
             transforms.ColorJitter(brightness=0.4, contrast=0.4),
             transforms.GaussianBlur(3),
             lambda x: salt_and_pepper_noise(x, salt_vs_pepper=0.45, amount=0.02),
-            normalize,   
+            normalize,
         ])
-        
+    else:
+        # Falls here if is_training=False OR augment=False
+        target_size = train_crop_size if is_training else test_crop_size
+        ret = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize(target_size, interpolation=interpolation),
+            normalize,
+        ])
     return ret
 
 
@@ -192,48 +193,36 @@ def rf_gaussian_blur(tensor, radius=1.0):
 
 
 # RF augmentation function
+
 def get_rf_transform(args, is_training, augment=False):
-
     train_crop_size = getattr(args, 'train_crop_size', args.crop_size)
-    test_scale = getattr(args, 'test_scale', args.scale_size)
     test_crop_size = getattr(args, 'test_crop_size', args.crop_size)
-    interpolation = Image.BICUBIC
 
-    if getattr(args, 'interpolation', None) and args.interpolation == 'bilinear':
+    interpolation = Image.BICUBIC
+    if getattr(args, 'interpolation', None) == 'bilinear':
         interpolation = Image.BILINEAR
 
     normalize = get_normalize()
+    target_size = train_crop_size if is_training else test_crop_size
 
-    # Base transform: resize + to tensor
-
-    if is_training:
-        base_transform = transforms.Compose([
-            transforms.Resize(train_crop_size, interpolation=interpolation),
+    if is_training and augment:
+        ret = transforms.Compose([
+            transforms.Resize(target_size, interpolation=interpolation),
             transforms.ToTensor(),
+            lambda x: rf_time_shift(x),
+            lambda x: rf_time_mask(x),
+            lambda x: rf_freq_mask(x),
+            lambda x: rf_add_gaussian_noise(x),
+            lambda x: rf_gaussian_blur(x),
+            normalize,
         ])
-    else:
-        base_transform = transforms.Compose([
-            transforms.Resize(test_crop_size, interpolation=interpolation),
+    else: # Apply normalization and resize without augmentation
+        ret = transforms.Compose([
+            transforms.Resize(target_size, interpolation=interpolation),
             transforms.ToTensor(),
+            normalize,
         ])
-
-    def transform_fn(img):
-        base_tensor = base_transform(img)
-
-        if is_training and augment:
-            aug_list = [
-                ("Time Shift",       normalize(rf_time_shift(base_tensor))),
-                ("Time Mask",        normalize(rf_time_mask(base_tensor))),
-                ("Freq Mask",        normalize(rf_freq_mask(base_tensor))),
-                ("Gaussian Noise",   normalize(rf_add_gaussian_noise(base_tensor))),
-                ("Gaussian Blur",    normalize(rf_gaussian_blur(base_tensor))),
-            ]
-            return normalize(base_tensor), aug_list
-        else:
-            return normalize(base_tensor)
-
-    return transform_fn
-
+    return ret
 
 
 def get_normalize():
