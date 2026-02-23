@@ -207,6 +207,6 @@ def get_loader(dataset, batch_size=4, is_train=True):
         dataset,
         batch_size=batch_size,
         shuffle=is_train,
-        num_workers=2,
+        num_workers=0,
         pin_memory=torch.cuda.is_available()
     )
