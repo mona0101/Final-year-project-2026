@@ -202,7 +202,8 @@ class DroneFusionDataset(Dataset):
 # ------------------------
 # DataLoader helper
 # ------------------------
-def get_loader(dataset, batch_size=4, is_train=True):
+'''
+def get_loader(dataset, batch_size=4, is_train=True,):
     return torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
@@ -210,9 +211,9 @@ def get_loader(dataset, batch_size=4, is_train=True):
         num_workers=0,
         pin_memory=torch.cuda.is_available()
     )
-
-
-def get_loader2(dataset, batch_size=4, is_train=True, num_workers=4, pin_memory=True):
+'''
+# Muna: I edited the code so it now allows you to choose any number of workers you want.
+def get_loader(dataset, batch_size=4, is_train=True, num_workers=0, pin_memory=False):
     return torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
