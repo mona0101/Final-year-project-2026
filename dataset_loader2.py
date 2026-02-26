@@ -125,6 +125,7 @@ class DroneFusionDataset(Dataset):
         # --- 1. معالجة الصوت (تحميل شرطي) ---
         audio_tensor = torch.empty(0)
         if 'audio' in self.modalities:
+            print("Loading AUDIO")
             sr = self.audio_sr if self.audio_sr is not None else (16000 if self.audio_feature_type == 'logmel' else 44100)
             waveform, _ = librosa.load(sample['audio_path'], sr=sr, offset=sample['start'], duration=self.segment_length)
 
@@ -145,6 +146,7 @@ class DroneFusionDataset(Dataset):
         # --- 2. معالجة الفيديو (تحميل شرطي) ---
         video_tensor = torch.empty(0)
         if 'video' in self.modalities:
+            print("Loading VIDEO")
             video_frames = [Image.open(p).convert("RGB") for p in sample['video_frame_paths'] if os.path.exists(p)]
             if 'video' in self.transform and video_frames:
                 video_tensor = torch.stack([self.transform['video'](f) for f in video_frames])
@@ -152,6 +154,7 @@ class DroneFusionDataset(Dataset):
         # --- 3. معالجة الـ RF (تحميل شرطي) ---
         rf_tensor = torch.empty(0)
         if 'rf' in self.modalities:
+            print("Loading RF")
             rf_frames = [Image.open(p).convert("RGB") for p in sample['rf_frame_paths'] if os.path.exists(p)]
             if 'rf' in self.transform and rf_frames:
                 rf_tensor = torch.stack([self.transform['rf'](f) for f in rf_frames])
