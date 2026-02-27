@@ -191,6 +191,37 @@ def rf_gaussian_blur(tensor, radius=1.0):
     t = (t - 0.5) / 0.5
     return t
 
+def separate_rf_augmentation(x):
+
+    # randomly choose one version
+    choice = random.choice([
+        "original",
+        "time_shift",
+        "time_mask",
+        "freq_mask",
+        "noise",
+        "blur"
+    ])
+
+    separate_rf_augmentation.last_choice = choice   
+
+    if choice == "time_shift":
+        x = rf_time_shift(x)
+
+    elif choice == "time_mask":
+        x = rf_time_mask(x)
+
+    elif choice == "freq_mask":
+        x = rf_freq_mask(x)
+
+    elif choice == "noise":
+        x = rf_add_gaussian_noise(x)
+
+    elif choice == "blur":
+        x = rf_gaussian_blur(x)
+
+    return x
+
 
 # RF augmentation function
 
@@ -206,16 +237,13 @@ def get_rf_transform(args, is_training, augment=False):
     target_size = train_crop_size if is_training else test_crop_size
 
     if is_training and augment:
-        ret = transforms.Compose([
-            transforms.Resize(target_size, interpolation=interpolation),
-            transforms.ToTensor(),
-            lambda x: rf_time_shift(x),
-            lambda x: rf_time_mask(x),
-            lambda x: rf_freq_mask(x),
-            lambda x: rf_add_gaussian_noise(x),
-            lambda x: rf_gaussian_blur(x),
-            normalize,
+       ret = transforms.Compose([
+         transforms.Resize(target_size, interpolation=interpolation),
+         transforms.ToTensor(),
+         lambda x: separate_rf_augmentation(x),
+         normalize,
         ])
+
     else: # Apply normalization and resize without augmentation
         ret = transforms.Compose([
             transforms.Resize(target_size, interpolation=interpolation),
