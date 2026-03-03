@@ -26,7 +26,7 @@ class DroneFusionDataset(Dataset):
         segment_length=0.25,
         audio_feature_type='mfcc',
         audio_sr=None,
-        # الميزة الجديدة: حدد الأنماط التي تريد تحميلها فعلياً من القرص
+        n_mels=64,  # Added: allows easy change of Mel frequency bins
         modalities=['audio', 'video', 'rf']
     ):
         self.audio_root = audio_root
@@ -41,6 +41,7 @@ class DroneFusionDataset(Dataset):
         self.segment_length = segment_length
         self.audio_feature_type = audio_feature_type.lower()
         self.audio_sr = audio_sr
+        self.n_mels = n_mels  # Added: number of Mel bins for log-Mel
         self.modalities = [m.lower() for m in modalities]
         self.samples = self._load_samples()
 
@@ -80,7 +81,6 @@ class DroneFusionDataset(Dataset):
                         start_time = segment * self.segment_length
                         end_time = (segment + 1) * self.segment_length
 
-                        # حساب الإطارات (Frames)
                         video_frame_start = int(start_time * 28) + 1
                         video_frame_end = int(end_time * 28)
                         rf_frame_start = int(start_time * 4) + 1
@@ -105,15 +105,37 @@ class DroneFusionDataset(Dataset):
                         })
         return samples
 
-    def _extract_logmel(self, y, sr, n_mels=64, n_fft=1024, hop_length=256, target_frames=16):
-        mel = librosa.feature.melspectrogram(y=y, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels, power=2.0)
+    def _extract_logmel(self, y, sr):
+        """
+        Extract log-Mel spectrogram with z-score normalization.
+        Automatically calculates target_frames based on segment_length and hop_length.
+        """
+        # Added: automatic target_frames calculation
+        target_frames = int(np.ceil(self.segment_length / (self.hop_length / sr)))
+
+        # Compute Mel spectrogram using user-specified parameters
+        mel = librosa.feature.melspectrogram(
+            y=y,
+            sr=sr,
+            n_fft=1024,          # Using your preferred n_fft
+            hop_length=138,      # Using your preferred hop_length
+            n_mels=self.n_mels,  # Using user-defined n_mels
+            power=2.0
+        )
+
+        # Convert to log scale
         log_mel = librosa.power_to_db(mel, ref=np.max)
+
+        # Z-score normalization
         log_mel = (log_mel - log_mel.mean()) / (log_mel.std() + 1e-8)
+
+        # Pad or truncate to match calculated target_frames
         if log_mel.shape[1] < target_frames:
             pad_width = target_frames - log_mel.shape[1]
-            log_mel = np.pad(log_mel, ((0, 0), (0, pad_width)), mode='constant')
+            log_mel = np.pad(log_mel, ((0,0),(0,pad_width)), mode='constant')
         else:
             log_mel = log_mel[:, :target_frames]
+
         return torch.from_numpy(log_mel).unsqueeze(0).float()
 
     def __len__(self):
@@ -122,10 +144,10 @@ class DroneFusionDataset(Dataset):
     def __getitem__(self, idx):
         sample = self.samples[idx]
 
-        # --- 1. معالجة الصوت (تحميل شرطي) ---
+        # --- Audio ---
         audio_tensor = torch.empty(0)
         if 'audio' in self.modalities:
-            sr = self.audio_sr if self.audio_sr is not None else (16000 if self.audio_feature_type == 'logmel' else 44100)
+            sr = self.audio_sr if self.audio_sr is not None else (22050 if self.audio_feature_type == 'logmel' else 44100)
             waveform, _ = librosa.load(sample['audio_path'], sr=sr, offset=sample['start'], duration=self.segment_length)
 
             if 'audio' in self.transform:
@@ -135,21 +157,21 @@ class DroneFusionDataset(Dataset):
                 max_val = np.max(np.abs(waveform))
                 if max_val > 0: waveform = waveform / max_val
                 audio_tensor = self._extract_logmel(waveform, sr)
-            else: # MFCC
+            else:  # MFCC
                 waveform = np.asfortranarray(waveform[::3])
                 mfcc = librosa.feature.mfcc(y=waveform, sr=sr, n_mfcc=self.n_mfcc, n_fft=self.n_fft, hop_length=self.hop_length)
                 pad_width = max(0, self.n_mfcc - mfcc.shape[1])
-                mfcc = np.pad(mfcc, ((0, 0), (0, pad_width)), mode='constant')
+                mfcc = np.pad(mfcc, ((0,0),(0,pad_width)), mode='constant')
                 audio_tensor = torch.tensor(mfcc, dtype=torch.float32).unsqueeze(0)
 
-        # --- 2. معالجة الفيديو (تحميل شرطي) ---
+        # --- Video ---
         video_tensor = torch.empty(0)
         if 'video' in self.modalities:
             video_frames = [Image.open(p).convert("RGB") for p in sample['video_frame_paths'] if os.path.exists(p)]
             if 'video' in self.transform and video_frames:
                 video_tensor = torch.stack([self.transform['video'](f) for f in video_frames])
 
-        # --- 3. معالجة الـ RF (تحميل شرطي) ---
+        # --- RF ---
         rf_tensor = torch.empty(0)
         if 'rf' in self.modalities:
             rf_frames = [Image.open(p).convert("RGB") for p in sample['rf_frame_paths'] if os.path.exists(p)]
@@ -157,6 +179,7 @@ class DroneFusionDataset(Dataset):
                 rf_tensor = torch.stack([self.transform['rf'](f) for f in rf_frames])
 
         return audio_tensor, video_tensor, rf_tensor, sample['label']
+
 
 def get_loader(dataset, batch_size=4, is_train=True, num_workers=0, pin_memory=False):
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=is_train, num_workers=num_workers, pin_memory=pin_memory)
