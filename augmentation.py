@@ -13,7 +13,7 @@ import librosa
 # standard normalization values used when training models (most common for PyTorch models like ResNet, VGG, EfficientNet)
 IMAGENET_PIXEL_MEAN = [123.675, 116.280, 103.530]
 IMAGENET_PIXEL_STD = [58.395, 57.12, 57.375]
-SR = 16000              # Sampling rate
+SR = 22050              # Sampling rate
 SEGMENT_LENGTH = 0.25
 
 def salt_and_pepper_noise(image, salt_vs_pepper=0.5, amount=0.01):
