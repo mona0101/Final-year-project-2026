@@ -95,22 +95,38 @@ def get_audio_transform(args, is_training, feature_type):
     # LOG-MEL augmentation
     elif feature_type == 'logmel':
 
-      def logmel_augment(waveform, sr):
+         def logmel_augment(waveform, sr):
 
-        # Apply ALL 4 augmentations
-        waveform = add_white_noise(waveform, noise_factor=0.02)
-        waveform = random_gain(waveform, min_gain=0.8, max_gain=1.2)
-        waveform = time_shift(waveform, shift_max=0.1, sr=sr)
-        waveform = time_stretch_fixlen(
-            waveform,
-            rate_min=0.9,
-            rate_max=1.1,
-            sr=sr,
-            segment_length=SEGMENT_LENGTH
-        )
+              choice = random.choice([
+                  "original",
+                  "white_noise",
+                  "gain",
+                  "time_shift",
+                  "time_stretch"
+              ])
 
-        return waveform.astype(np.float32), sr
+              logmel_augment.last_choice = choice
 
+              if choice == "white_noise":
+                  waveform = add_white_noise(waveform, noise_factor=0.02)
+
+              elif choice == "gain":
+                  waveform = random_gain(waveform, min_gain=0.8, max_gain=1.2)
+
+              elif choice == "time_shift":
+                  waveform = time_shift(waveform, shift_max=0.1, sr=sr)
+
+              elif choice == "time_stretch":
+                  waveform = time_stretch_fixlen(
+                      waveform,
+                      rate_min=0.9,
+                      rate_max=1.1,
+                      sr=sr,
+                      segment_length=SEGMENT_LENGTH
+                  )
+
+              return waveform.astype(np.float32), sr
+    
     return logmel_augment
 
 
