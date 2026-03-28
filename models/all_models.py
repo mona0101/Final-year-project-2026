@@ -199,6 +199,39 @@ class AudioVGG19(nn.Module):
         return x.squeeze(1)
 
 
+# ---------------------------- ResNet18 for RF -------------------------
+
+class RF_ResNet18(nn.Module):
+    def __init__(self, n_classes=2, pretrained=True, freeze_backbone=True):
+        super(RF_ResNet18, self).__init__()
+        
+        # 1. تحميل الموديل بنفس الطريقة (Weights Default)
+        weights = tv_models.ResNet18_Weights.DEFAULT if pretrained else None
+        self.model = tv_models.resnet18(weights=weights)
+        
+        # 2. تجميد الأوزان (اختياري كما في الكود الخاص بك) لعمل Transfer Learning
+        if freeze_backbone:
+            for param in self.model.parameters():
+                param.requires_grad = False
+        
+        # 3. تغيير الطبقة الأخيرة لتناسب مشروع SAQR (Drone vs No Drone)
+        # نستخدم n_classes - 1 (أي 1) مع Sigmoid للـ Binary Classification
+        # أو n_classes (أي 2) إذا كنت ستستخدم CrossEntropyLoss
+        # لكي يتوافق مع كود الـ Fusion السابق، سنستخدم مخرجاً واحداً مع Sigmoid
+        self.model.fc = nn.Sequential(
+            nn.Linear(self.model.fc.in_features, n_classes - 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        """
+        Input x shape: (Batch, 3, H, W)
+        """
+        # ResNet18 تتوقع مدخل 4D (صورة أو Spectrogram)
+        out = self.model(x)
+        return out.squeeze() # لإرجاع احتمالية واحدة لكل Batch
+
+
 
 
 
