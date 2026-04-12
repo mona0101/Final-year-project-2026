@@ -167,7 +167,6 @@ class LogMelCNN_64(nn.Module):
         out = self.classifier(x)
         return out.squeeze()
 
-
 #  ----------- AudioVGG19 audio------------------------------
 
 class GlobalPooling2D(nn.Module):
