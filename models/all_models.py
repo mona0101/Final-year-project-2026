@@ -124,8 +124,7 @@ class Visual_MobileNet(nn.Module):
         x = torch.flatten(x, 1)
         out = self.fc(x)
 
-        return  out.squeeze()
-
+        return out.squeeze()
   
   #  -------------------------------------------------  CNN for audio ------------------------------------------------
 class LogMelCNN_64(nn.Module):
