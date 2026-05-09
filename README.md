@@ -15,10 +15,12 @@ https://drive.google.com/drive/folders/1CI0CcZMj0FwdRkXOu2V4ZI4izZVUhV3Z?usp=sha
 
 # Libraries & Tools Used
 # Libraries & Tools Used
+# Libraries & Tools Used
 
 [![PyTorch](https://img.shields.io/badge/PyTorch-orange.svg)](https://pytorch.org/)
 [![Torchvision](https://img.shields.io/badge/Torchvision-red.svg)](https://pytorch.org/vision/stable/)
 [![Torch](https://img.shields.io/badge/Torch-orange.svg)](https://pytorch.org/)
+[![YOLOv8 - Ultralytics](https://img.shields.io/badge/YOLOv8-Ultralytics-green.svg)](https://ultralytics.com/)
 [![Librosa](https://img.shields.io/badge/Librosa-blue.svg)](https://librosa.org/)
 [![Torchaudio](https://img.shields.io/badge/Torchaudio-blueviolet.svg)](https://pytorch.org/audio/stable/)
 [![AugLy](https://img.shields.io/badge/AugLy-purple.svg)](https://github.com/facebookresearch/AugLy)
@@ -29,6 +31,5 @@ https://drive.google.com/drive/folders/1CI0CcZMj0FwdRkXOu2V4ZI4izZVUhV3Z?usp=sha
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-orange.svg)](https://scikit-learn.org/)
 [![Pandas](https://img.shields.io/badge/Pandas-darkblue.svg)](https://pandas.pydata.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-green.svg)](https://opencv.org/)
-[![Ultralytics](https://img.shields.io/badge/Ultralytics-green.svg)](https://ultralytics.com/)
 [![Supervision](https://img.shields.io/badge/Supervision-black.svg)](https://github.com/roboflow/supervision)
 [![Streamlit](https://img.shields.io/badge/Streamlit-red.svg)](https://streamlit.io/)
