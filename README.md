@@ -83,18 +83,6 @@ All experiment weights are hosted on Google Drive:
 
 ---
 
-## Models Used
-
-Six deep learning models are employed across the three sensor modalities — two architectures per modality:
-
-| Modality | Models |
-|---|---|
-| RF | ResNet-18, CNN |
-| Audio | ResNet-18, CNN |
-| Video | VGG, MobileNet |
-
----
-
 ## Experiments & Results
 
 ### Unimodal Experiments (`uni_model_results2/`)
