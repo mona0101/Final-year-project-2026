@@ -117,16 +117,10 @@ The system includes a **Streamlit web application** that provides an interactive
 To run the app:
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
-
-# 2. Ensure dataset and model weights are in the expected directories
-
-# 3. Launch the Streamlit app
 streamlit run deployment/app.py
 ```
 
----
+Once the app is running, you can test the model by uploading your sensor data directly through the interface. The app supports uploading **zipped folders** containing the original raw data for each modality (RF, Audio, Video).
 
 ## Tracking
 
