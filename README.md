@@ -1,9 +1,4 @@
 # Real-Time Multi-Sensor Drone Detection and Tracking System
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Framework: PyTorch](https://img.shields.io/badge/Framework-PyTorch-orange.svg)](https://pytorch.org/)
-
----
-
 ## Overview
 
 This project is a **Real-Time Multi-Sensor Drone Detection and Tracking System** designed to detect and track drones in real time using deep learning and sensor fusion techniques.
