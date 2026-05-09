@@ -19,7 +19,6 @@
 [![Supervision](https://img.shields.io/badge/Supervision-black.svg)](https://github.com/roboflow/supervision)
 [![Streamlit](https://img.shields.io/badge/Streamlit-red.svg)](https://streamlit.io/)
 
----
 
 ## Overview
 
@@ -33,7 +32,7 @@ The system integrates three main data sources:
 
 These modalities are processed independently and then fused together to improve detection accuracy, robustness, and real-time performance.
 
----
+
 
 ## Repository Structure
 
@@ -72,7 +71,6 @@ Final-year-project-2026/
 > from data_preparation.augmentation import ...
 > ```
 
----
 
 ## System Architecture
 
@@ -82,7 +80,7 @@ The system follows a **three-stage pipeline**:
 2. **Late Fusion** — The outputs of the trained unimodal models are combined across all three modalities to produce a final detection decision.
 3. **Tracking & Deployment** — Detected drones are tracked using YOLOv8, and results are visualized through an interactive Streamlit web application.
 
----
+
 
 ## Datasets
 
@@ -92,7 +90,7 @@ The multi-modal drone dataset is publicly available at:
 
 > **Note:** To run the Streamlit deployment app, you must download the dataset and organize it according to the expected folder structure for each modality (RF, Audio, Video).
 
----
+
 
 ## Pre-Trained Model Weights
 
@@ -103,7 +101,7 @@ All experiment weights are hosted on Google Drive:
 | **Unimodal Model Weights** (6 experiments) | [Google Drive — Unimodal Weights](https://drive.google.com/drive/folders/1POsoG35KjqZesHAH-NEi2zGWXv6KoEyG?usp=sharing) |
 | **Fusion Model Weights** (6 experiments) | [Google Drive — Fusion Weights](https://drive.google.com/drive/folders/1CI0CcZMj0FwdRkXOu2V4ZI4izZVUhV3Z?usp=sharing) |
 
----
+
 
 ## Experiments & Results
 
@@ -118,7 +116,7 @@ All experiment weights are hosted on Google Drive:
 - Final predictions are produced by combining the outputs of all three modalities
 - The best-performing fusion configuration is used in the deployment application
 
----
+
 
 ## Deployment
 
@@ -140,7 +138,7 @@ The `tracking/` folder contains the full YOLOv8-based drone detection and tracki
 - Multi-object tracking integration
 - Frame-by-frame visualization
 
----
+
 
 ## References
 
