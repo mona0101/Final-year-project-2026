@@ -23,11 +23,9 @@ Final-year-project-2026/
 │   └── augmentation.py           # Data augmentation strategies for each sensor modality
 │
 ├── models/
-│   ├── resnet18_*.py             # ResNet-18 based model(s)
-│   ├── cnn_*.py                  # Custom CNN model(s)
-│   ├── vgg_*.py                  # VGG-based model(s)
-│   └── mobilenet_*.py            # MobileNet-based model(s)
-│                                 # (6 models total — 2 architectures per sensor)
+│   └── all_models.py             # All 6 model architectures in one file
+│                                 # (ResNet-18, CNN, VGG, MobileNet —
+│                                 #  2 architectures per sensor modality)
 │
 ├── uni_model_results2/
 │   └── ...                       # Training results for each sensor (6 experiments: 2 per sensor)
