@@ -1,4 +1,26 @@
 # Real-Time Multi-Sensor Drone Detection and Tracking System
+---
+## Libraries & Tools Used
+
+[![PyTorch](https://img.shields.io/badge/PyTorch-orange.svg)](https://pytorch.org/)
+[![Torchvision](https://img.shields.io/badge/Torchvision-red.svg)](https://pytorch.org/vision/stable/)
+[![Torch](https://img.shields.io/badge/Torch-orange.svg)](https://pytorch.org/)
+[![YOLOv8 - Ultralytics](https://img.shields.io/badge/YOLOv8-Ultralytics-green.svg)](https://ultralytics.com/)
+[![Librosa](https://img.shields.io/badge/Librosa-blue.svg)](https://librosa.org/)
+[![Torchaudio](https://img.shields.io/badge/Torchaudio-blueviolet.svg)](https://pytorch.org/audio/stable/)
+[![AugLy](https://img.shields.io/badge/AugLy-purple.svg)](https://github.com/facebookresearch/AugLy)
+[![Pillow](https://img.shields.io/badge/Pillow-yellow.svg)](https://python-pillow.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-lightgrey.svg)](https://numpy.org/)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-blue.svg)](https://matplotlib.org/)
+[![Seaborn](https://img.shields.io/badge/Seaborn-teal.svg)](https://seaborn.pydata.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-orange.svg)](https://scikit-learn.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-darkblue.svg)](https://pandas.pydata.org/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-green.svg)](https://opencv.org/)
+[![Supervision](https://img.shields.io/badge/Supervision-black.svg)](https://github.com/roboflow/supervision)
+[![Streamlit](https://img.shields.io/badge/Streamlit-red.svg)](https://streamlit.io/)
+
+---
+
 ## Overview
 
 This project is a **Real-Time Multi-Sensor Drone Detection and Tracking System** designed to detect and track drones in real time using deep learning and sensor fusion techniques.
@@ -117,27 +139,6 @@ The `tracking/` folder contains the full YOLOv8-based drone detection and tracki
 - YOLO model configuration and inference
 - Multi-object tracking integration
 - Frame-by-frame visualization
-
----
-
-## Libraries & Tools Used
-
-[![PyTorch](https://img.shields.io/badge/PyTorch-orange.svg)](https://pytorch.org/)
-[![Torchvision](https://img.shields.io/badge/Torchvision-red.svg)](https://pytorch.org/vision/stable/)
-[![Torch](https://img.shields.io/badge/Torch-orange.svg)](https://pytorch.org/)
-[![YOLOv8 - Ultralytics](https://img.shields.io/badge/YOLOv8-Ultralytics-green.svg)](https://ultralytics.com/)
-[![Librosa](https://img.shields.io/badge/Librosa-blue.svg)](https://librosa.org/)
-[![Torchaudio](https://img.shields.io/badge/Torchaudio-blueviolet.svg)](https://pytorch.org/audio/stable/)
-[![AugLy](https://img.shields.io/badge/AugLy-purple.svg)](https://github.com/facebookresearch/AugLy)
-[![Pillow](https://img.shields.io/badge/Pillow-yellow.svg)](https://python-pillow.org/)
-[![NumPy](https://img.shields.io/badge/NumPy-lightgrey.svg)](https://numpy.org/)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-blue.svg)](https://matplotlib.org/)
-[![Seaborn](https://img.shields.io/badge/Seaborn-teal.svg)](https://seaborn.pydata.org/)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-orange.svg)](https://scikit-learn.org/)
-[![Pandas](https://img.shields.io/badge/Pandas-darkblue.svg)](https://pandas.pydata.org/)
-[![OpenCV](https://img.shields.io/badge/OpenCV-green.svg)](https://opencv.org/)
-[![Supervision](https://img.shields.io/badge/Supervision-black.svg)](https://github.com/roboflow/supervision)
-[![Streamlit](https://img.shields.io/badge/Streamlit-red.svg)](https://streamlit.io/)
 
 ---
 
