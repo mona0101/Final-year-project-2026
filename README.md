@@ -27,12 +27,17 @@ This project is a **Real-Time Multi-Sensor Drone Detection and Tracking System**
 The system integrates three main data sources:
 
 - **Radio-Frequency (RF)** signals
-- **Audio** signals
-- **Video** streams
+- **Audio** 
+- **Video** 
 
 These modalities are processed independently and then fused together to improve detection accuracy, robustness, and real-time performance.
 
 
+## Datasets
+
+The multi-modal drone dataset is publicly available at:
+
+**[https://github.com/trimodaldataset/multi-modal-drone-data](https://github.com/trimodaldataset/multi-modal-drone-data)**
 
 ## Repository Structure
 
@@ -82,11 +87,6 @@ The system follows a **three-stage pipeline**:
 
 
 
-## Datasets
-
-The multi-modal drone dataset is publicly available at:
-
-**[https://github.com/trimodaldataset/multi-modal-drone-data](https://github.com/trimodaldataset/multi-modal-drone-data)**
 
 > **Note:** To run the Streamlit deployment app, you must download the dataset and organize it according to the expected folder structure for each modality (RF, Audio, Video).
 
